@@ -1,0 +1,29 @@
+{
+  "name": "urlbox-mcp-server",
+  "version": "1.0.0",
+  "description": "Render website screenshots and PDFs using Urlbox.com API with MCP integration.",
+  "main": "build/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
+    "dev": "npm run build && node build/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["mcp", "screenshot", "pdf", "urlbox", "web-automation"],
+  "author": "Arnold Cubici-Jones <arnold@urlbox.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.5.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.4",
+    "typescript": "^5.7.3"
+  },
+  "bin": {
+    "urlbox-mcp": "./build/index.js"
+  },
+  "files": [
+    "build"
+  ]
+}
