@@ -1,0 +1,346 @@
+# Urlbox
+
+> Urlbox is a website screenshot and web automation API service that captures screenshots, generates PDFs, and extracts data from web pages.
+
+Urlbox provides both synchronous and asynchronous rendering with comprehensive customization options, cloud storage integration, and extensive documentation for developers. The API supports full page screenshots, element screenshots, PDF generation, and advanced automation features with over 50 render options.
+
+## Getting Started
+- [Overview](/docs): Learn how to make your first screenshot request with render links and secure authentication
+- [Make your first request](/docs/getting-started): Create basic render links using API keys and customize with viewport and thumbnail options
+
+## API Documentation
+- [Projects](/docs/api/projects): Create and manage API keys with project-based organization for team workflows
+- [Sync vs Async](/docs/guides/sync-vs-async): Choose between immediate responses or asynchronous processing with polling
+- [Webhooks](/docs/webhooks): Receive POST notifications when async renders complete with result URLs and metadata
+- [Usage Info](/docs/api/get-usage): Track API consumption through response headers and dashboard analytics
+- [Rate Limits](/docs/api/rate-limits): Understand request throttling and optimize API usage patterns
+- [REST API vs Render Links](/docs/api/rest-api-vs-render-links): Compare JSON POST requests versus URL-based rendering approaches
+
+## Guides
+- [Using proxies](/docs/guides/proxies): Bypass site protections and geo-restrictions with third-party proxy providers
+- [Setting the user agent](/docs/guides/setting-the-user-agent): Mimic different browsers and devices for accurate rendering
+- [Saving to S3](/docs/guides/s3): Configure automatic upload to your own cloud storage buckets
+- [Sandbox](/docs/guides/sandbox): Test render options interactively in a UI before coding, with live preview and generated links
+
+## Screenshots and PDFs
+- [Full page screenshots](/docs/screenshots/full-page-screenshots): Capture entire web pages, top to bottom
+- [Element screenshots](/docs/screenshots/element-screenshots): Screenshot specific elements on a page
+- [Rendering PDFs](/docs/pdfs/rendering-pdfs): Generate PDF files from URLs and HTML
+
+## Cloud Storage Configuration
+- [Configure S3](/docs/storage/configure-s3): Amazon S3 setup guide
+- [Configure private S3 bucket](/docs/storage/configure-s3-private): Private S3 bucket configuration
+- [Cloudflare R2](/docs/storage/configure-cloudflare-r2): Cloudflare R2 setup guide
+- [Google Cloud Storage](/docs/storage/configure-google-cloud-storage): GCS setup guide
+- [Digital Ocean Spaces](/docs/storage/configure-digitalocean-spaces): DigitalOcean Spaces setup
+- [Backblaze B2](/docs/storage/configure-backblaze-b2): Backblaze B2 setup guide
+
+## Render Options
+- [Complete Options Reference](/docs/options): Comprehensive list of all render options
+- [Basic Options](/docs/options#basic-options)
+  - [url](/docs/options#url): The URL or domain of the website you want to screenshot. We will automatically prepend \`http://\` if it is missing.
+  - [html](/docs/options#html): The HTML you want to render.
+  - [format](/docs/options#format): The output format of the resulting render.
+  - [width](/docs/options#width): The viewport width of the browser, in pixels.
+  - [height](/docs/options#height): The viewport height of the browser, in pixels.
+  - [full_page](/docs/options#full_page): Specify whether to capture the full scrollable area of the website.
+                For PDFs, \`full_page\` mode will attempt to capture the whole website onto one single page PDF document.
+                It's likely you'll want to also hide any cookie banners that crop up during a full page screenshot, so we recommend you use [\`click_accept\`](#click_accept) and [\`hide_cookie_banners\`](#hide_cookie_banners) too.
+  - [selector](/docs/options#selector): Take a screenshot of the element that matches this selector. By default, if the selector is not found, Urlbox will take a normal viewport screenshot. If you prefer Urlbox to fail the request when the selector is not found, pass \`fail_if_selector_missing=true\`.
+  - [clip](/docs/options#clip): Clip the screenshot to the bounding box specified by \`x,y,width,height\`.
+  - [gpu](/docs/options#gpu): Enable GPU acceleration to render 3D scenes and heavy WebGL content. This is a beta feature and requires pre-approval. Please contact support@urlbox.com to enable this feature on your account.
+  - [response_type](/docs/options#response_type): For render link requests, setting this option to \`json\` will change the response type of the Urlbox request to JSON. For the API, the default response type is JSON.
+
+- [Blocking Options](/docs/options#blocking-options)
+  - [block_ads](/docs/options#block_ads): Blocks requests from popular advertising networks from loading.
+  - [hide_cookie_banners](/docs/options#hide_cookie_banners): Automatically hides cookie banners from most websites, by setting their style to \`display: none !important;\`
+  - [click_accept](/docs/options#click_accept): Similar to the [\`hide_cookie_banners\`](#hide_cookie_banners) option, but instead of hiding the banners, this option attempts to click on the 'Accept' button, in order to accept cookies.
+  - [press_escape](/docs/options#press_escape): Attempts to press the Escape (ESC) key before capturing the page. Useful for dismissing pop-ups, overlays, or advertising banners that appear on load.
+  - [block_urls](/docs/options#block_urls): Block requests from specific domains from loading. You can use wildcard characters such as \`*\` to match subdomains.
+  - [block_images](/docs/options#block_images): Blocks image requests
+  - [block_fonts](/docs/options#block_fonts): Blocks font requests
+  - [block_medias](/docs/options#block_medias): Block video and audio requests
+  - [block_styles](/docs/options#block_styles): Prevent stylesheet requests from loading
+  - [block_scripts](/docs/options#block_scripts): Prevent requests for javascript scripts from loading
+  - [block_frames](/docs/options#block_frames): Block frames.
+  - [block_fetch](/docs/options#block_fetch): Block fetch requests from the target URL.
+  - [block_xhr](/docs/options#block_xhr): Block XHR requests from the target URL.
+  - [block_sockets](/docs/options#block_sockets): Block websocket requests.
+  - [hide_selector](/docs/options#hide_selector): Comma-delimited string of CSS element selectors that are hidden by setting their style to \`display: none !important;\`. Useful for hiding pop-ups.
+
+- [Customize Options](/docs/options#customize-options)
+  - [js](/docs/options#js): Execute custom JavaScript in the context of the page. The JS gets executed after the page's dom has loaded, but before the screenshot is taken. No need to use \`load\` etc event handlers to run code, as these events will already have fired by the time this JS gets executed. You can use \`await\` to wait for promises to resolve.
+  - [css](/docs/options#css): Inject custom CSS into the page
+  - [dark_mode](/docs/options#dark_mode): Emulate dark mode on websites by setting \`prefers-color-scheme: dark\`
+  - [reduced_motion](/docs/options#reduced_motion): Prefer less animations on websites by setting \`prefers-reduced-motion: reduced\`
+  - [show_timestamp](/docs/options#show_timestamp): Shows a timestamp in a header above the rendered screenshot. Can be paired with show URL. If you're rendering a PDF, you can achieve this with the show_header option.
+  - [show_url](/docs/options#show_url): Shows a URL in a header above the rendered screenshot. Can be paired with show timestamp. If you're rendering a PDF, you can achieve this with the show_header option.
+
+- [Screenshot Options](/docs/options#screenshot-options)
+  - [retina](/docs/options#retina): Take a 'retina' or high-definition screenshot, equivalent to setting a device pixel ratio of 2.0 or @2x. Please note that retina screenshots will be double the normal dimensions and will normally take slightly longer to process due to the much bigger image size.
+  - [thumb_width](/docs/options#thumb_width): The width of the generated thumbnail, in pixels. Omit for a full-size screenshot.
+  - [thumb_height](/docs/options#thumb_height): The height of the generated thumbnail, in pixels. Omit for a full-size screenshot.
+  - [img_fit](/docs/options#img_fit): How the screenshot should be resized or cropped to fit the dimensions when using [\`thumb_width\`](#thumb_width) and/or [\`thumb_height\`](#thumb_height) options
+  - [img_position](/docs/options#img_position): How the image should be positioned when using an [\`img_fit\`](#img_fit) of \`cover\` or \`contain\`.
+  - [img_bg](/docs/options#img_bg): Background colour to use when [img_fit](#img_fit) is \`contain\`, or [\`img_pad\`](#img_pad) is used, defaults to black without transparency
+  - [img_pad](/docs/options#img_pad): Pad the screenshot, giving it a border. Can either be a single pixel value that gets added to each side, or a comma delimited string of \`top,right,bottom,left\` pixel values.
+  - [quality](/docs/options#quality): The image quality of the resulting screenshot (JPEG/WebP only)
+  - [transparent](/docs/options#transparent): If a website has no background color set, the image will have a transparent background (PNG/WebP only)
+  - [max_height](/docs/options#max_height): For extremely lengthy websites, it may be preferable to limit the screenshot to a maximum height to prevent Urlbox from spending time scrolling and generating an enormous screenshot.
+  - [download](/docs/options#download): Pass in a filename which sets the content-disposition header on the response. E.g. \`download=myfilename.png\` This will make the Urlbox link downloadable, and will prompt the user to save the file as \`myfilename.png\`
+
+- [PDF Options](/docs/options#pdf-options)
+  - [pdf_page_size](/docs/options#pdf_page_size): Sets the PDF page size. 
+
+ Setting this option will take precedence over \`pdf_page_width\` and \`pdf_page_height\`.
+  - [pdf_page_range](/docs/options#pdf_page_range): Sets the PDF page range to return. 
+
+ By default, the page is split into a multi page document and returns all page. Use this option to restrict which pages should be returned.
+  - [pdf_page_width](/docs/options#pdf_page_width): Sets the PDF page width, in pixels.
+  - [pdf_page_height](/docs/options#pdf_page_height): Sets the PDF page height, in pixels.
+  - [pdf_margin](/docs/options#pdf_margin): Sets the margin of the PDF document.
+  - [pdf_margin_top](/docs/options#pdf_margin_top): Sets a custom top margin on the PDF.
+  - [pdf_margin_right](/docs/options#pdf_margin_right): Sets a custom right margin on the PDF.
+  - [pdf_margin_bottom](/docs/options#pdf_margin_bottom): Sets a custom bottom margin on the PDF.
+  - [pdf_margin_left](/docs/options#pdf_margin_left): Set a custom left margin on the PDF.
+  - [pdf_auto_crop](/docs/options#pdf_auto_crop): Automatically remove white space from PDF. Occasionally a PDF will have a lot of trailing white space at the bottom of the page. This option will attempt to automatically crop the PDF to remove this white space.
+  - [pdf_scale](/docs/options#pdf_scale): Sets the scale factor of the website content in the PDF. Valid values are numbers between 0.1 and 2.
+  - [pdf_orientation](/docs/options#pdf_orientation): Sets the orientation of the PDF.
+  - [pdf_background](/docs/options#pdf_background): Sets whether to print background images in the PDF
+  - [disable_ligatures](/docs/options#disable_ligatures): Prevents ligatures from being used. Useful when rendering a PDF, and you want to extract text which contains ligatures.
+  - [media](/docs/options#media): By default, when generating a PDF, the \`print\` CSS media query is used. To generate a PDF using the \`screen\` CSS, set this option to \`screen\`.
+  - [pdf_show_header](/docs/options#pdf_show_header): Whether to show the default pdf header on each page of the pdf. The template of the header can be changed by setting the [\`pdf_header\`](#pdf_header) option.
+  - [pdf_header](/docs/options#pdf_header): Change the default pdf header that is shown on each page of the pdf when [\`pdf_show_header\`](#pdf_show_header) option is set.
+
+            You have the option to show the following variables in the header (or footer) of the pdf:
+
+            * current \`date\`
+            * \`title\` of the page
+            * \`url\` of the page
+            * current \`pageNumber\`
+            * the \`totalPages\` in the pdf document
+
+            You can display these variables by creating empty divs or spans, with special css class names relating to the variable you want to show.
+
+            For example, if you want to show the \`date\` followed by the \`url\`, you could use the following pdf header template:
+
+            \`<div class="date"></div><div class="url"></div>\`.
+
+            The pdf header template you set are inserted as the innerHTML of a parent div which is a flex container, and has \`align-items\` set to \`flex-start\`.
+
+            There are also some helper classes for aligning the divs or spans. The following classes are available:
+
+            * \`left\` - adds some left padding to the element and sets \`flex: none\`.
+            * \`center\` - aligns the element and text to the center.
+            * \`right\` - adds some right padding to the element and sets \`flex: none\`.
+            * \`text\` - sets the text to 8pt.
+            * \`grow\` - sets \`flex: auto\` on the element, allowing it to grow to fill the available space.
+
+
+            The default pdf header is:
+
+            \`<div class='date text left'></div><div class='title text center'></div>\`.
+
+            You can see exactly how the pdf page is constructed by looking at the [chromium pdf template](https://source.chromium.org/chromium/chromium/src/+/main:components/printing/resources/print_header_footer_template_page.html;l=98-100?q=header_footer%20&ss=chromium%2Fchromium%2Fsrc) in the chromium source repository.
+            
+  - [pdf_show_footer](/docs/options#pdf_show_footer): Whether to show the default pdf footer on each page of the pdf. The template of the footer can be changed by setting the [\`pdf_footer\`](#pdf_footer) option.
+  - [pdf_footer](/docs/options#pdf_footer): Change the default pdf footer that is shown on each page of the pdf when [\`pdf_show_footer\`](#pdf_show_footer) option is set.
+
+            You have the option to show the following variables in the footer (or header) of the pdf:
+
+            * current \`date\`
+            * \`title\` of the page
+            * \`url\` of the page
+            * current \`pageNumber\`
+            * the \`totalPages\` in the pdf document
+
+            You can display these variables by creating empty divs or spans, with special css class names relating to the variable you want to show.
+
+            For example, if you want to show the \`date\` followed by the \`url\`, you could use the following pdf footer template:
+
+            \`<div class="date"></div><div class="url"></div>\`.
+
+            The pdf footer template you set are inserted as the innerHTML of a parent div which is a flex container, and has \`align-items\` set to \`flex-end\`.
+
+            There are also some helper classes for aligning the divs or spans. The following classes are available:
+
+            * \`left\` - adds some left padding to the element and sets \`flex: none\`.
+            * \`center\` - aligns the element and text to the center.
+            * \`right\` - adds some right padding to the element and sets \`flex: none\`.
+            * \`text\` - sets the text to 8pt.
+            * \`grow\` - sets \`flex: auto\` on the element, allowing it to grow to fill the available space.
+
+
+            The default pdf footer is:
+
+            \`<div class='url text left grow'></div><div class='text right'><span class='pageNumber'></span>/<span class='totalPages'></span></div>\`.
+
+            You can see exactly how the pdf page is constructed by looking at the [chromium pdf template](https://source.chromium.org/chromium/chromium/src/+/main:components/printing/resources/print_header_footer_template_page.html;l=101-105?q=header_footer%20&ss=chromium%2Fchromium%2Fsrc) in the chromium source repository.
+            
+  - [readable](/docs/options#readable): Make the pdf into a readable document by removing unnecessary elements such as navigation bars, ads, etc.
+
+- [Cache Options](/docs/options#cache-options)
+  - [force](/docs/options#force): Generate a fresh screenshot or PDF, instead of getting a cached version.
+  - [unique](/docs/options#unique): Pass a unique string such as a UUID, hash or timestamp, to have more control over when to generate a fresh screenshot or PDF.
+  - [ttl](/docs/options#ttl): The duration to keep a screenshot or PDF in the cache, in seconds. ttl stands for 'time to live'. The default value is also the maximum value: \`2592000\` seconds (30 days).
+
+- [Request Options](/docs/options#request-options)
+  - [proxy](/docs/options#proxy): Pass in a proxy server address to make screenshot requests via that server in the format \`[address]:[port]\`.
+
+ If proxy authentication is required, you can use the following format: \`[user]:[password]@[address]:[port]\`.
+  - [header](/docs/options#header): Set a header on the request when loading the URL
+
+Example: To set the header with key \`X-My-Header\` to the value \`SomeValue\`, you would pass \`header=X-My-Header%3DSomeValue\`.
+      
+
+This can be set multiple times, to set more than one header - e.g. \`header=X-My-Header%3DSomeValue&header=X-My-Other-Header%3DSomeOtherValue\`.
+
+      As with all options passed via the query string, the header value must be URL encoded - so \`X-My-Header=SomeValue\` becomes \`X-My-Header%3DSomeValue\` in order to be interpreted correctly by Urlbox.
+  - [cookie](/docs/options#cookie): Sets a cookie on the request when loading the URL.
+
+              Example: To set the cookie with key \`Opt-In\` to the value \`yes\`, you would set the value of this option to \`Opt-In=yes\`.
+
+              Cookies can be passed as an array, to allow setting multiple cookies - e.g.\`["Opt-In=yes","Session-Id=DMTIzNDU"]\`.
+
+                To achieve multiple cookies with render links, just set the cookie option multiple times, like \`cookie=Opt-In%3Dyes&cookie=Session-Id%3DDMTIzNDU\`.
+
+                To set a specific domain on a cookie, you can do the following: \`OptIn=yes;Domain=.mydomain.com\`.
+
+                You can set other attributes for the cookie such as \`Path\`, \`HttpOnly\` and \`SameSite\`
+  - [user_agent](/docs/options#user_agent): Sets the \`User-Agent\` string for the request
+
+The presets are: 
+* \`random\` - Uses a random user-agent to help avoid bot detection
+ * \`mobile\` - Uses a 'mobile-like' user-agent string
+ * \`desktop\` - Uses a 'desktop' user-agent string
+ This can be used in some cases to emulate certain device types, like mobile phones or tablets.
+  - [platform](/docs/options#platform): Sets the \`navigator.platform\` that the browser will report for the request. Useful for getting around certain scripts that detect the platform.
+  - [accept_lang](/docs/options#accept_lang): Sets an \`Accept-Language\` header on requests to the target URL
+  - [authorization](/docs/options#authorization): Sets an \`Authorization\` header on requests to the target URL.
+ Can be used to pass an auth token through to the site in order to 'login' before rendering.
+  - [tz](/docs/options#tz): Emulate the timezone to use when rendering pages.
+
+ Example: \`tz=Europe/London\`. A list of timezone ID's can be found here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  - [engine_version](/docs/options#engine_version): Sets the version of the urlbox rendering engine to use when rendering the page. This can be useful for testing how a page will render in the latest version of our rendering engine.
+  - [certify](/docs/options#certify): This creates a hash of the rendered file, timestamp and options providing proof that a render was taken at a given time. Returns a hash, timestamp and the options used to hash. Checkout our [\`guide\`]( /guides/certify-a-screenshot ) on certifying a render for more information.
+
+- [Wait Options](/docs/options#wait-options)
+  - [delay](/docs/options#delay): The amount of time to wait before Urlbox captures a render in milliseconds.
+  - [timeout](/docs/options#timeout): The amount of time to wait for the requested URL to load, in milliseconds. The timeout value needs to be between 5,000 and 100,000 milliseconds. The default is 30000 or 30 seconds.
+  - [wait_until](/docs/options#wait_until): Waits until the specified DOM event has fired before capturing a render.
+
+The available options are:
+
+* \`domloaded\` (the \`DOMContentLoaded\` event is fired)
+* \`mostrequestsfinished\` (consider navigation to be finished when there are no more than 2 network connections for at least 500 ms)
+* \`requestsfinished\` (there are no more than 0 network connections for at least 500 ms)
+* \`loaded\` (the \`load\` event is fired) 
+  - [wait_for](/docs/options#wait_for): Waits for the element specified by this selector to be present in the DOM before taking a screenshot or PDF. 
+
+By default, Urlbox will take a screenshot or PDF if the \`wait_for\` element is not found after waiting for the time specified by the [\`wait_timeout\`](#wait_timeout) option.
+
+ If you prefer Urlbox to fail the request when the \`wait_for\` element is not found, pass [\`fail_if_selector_missing=true\`](#fail_if_selector_missing)
+  - [wait_to_leave](/docs/options#wait_to_leave): Waits for the element specified by this selector to be absent from the DOM before taking a screenshot or PDF. 
+
+A typical use-case would be waiting for loading spinners to be absent before taking a screenshot. 
+
+By default, Urlbox will take a screenshot or PDF if the \`wait_to_leave\` element is still present after the time specified by the [\`wait_timeout\`](#wait_timeout) option. 
+
+ If you prefer Urlbox to fail the request when the \`wait_to_leave\` element is still present, pass [\`fail_if_selector_present=true\`](#fail_if_selector_present)
+  - [wait_timeout](/docs/options#wait_timeout): The amount of time to wait for the [\`wait_for\`](#wait_for) element to appear, or the [\`wait_to_leave\`](#wait_to_leave) element to leave before continuing, in milliseconds.
+
+- [Fail Options](/docs/options#fail-options)
+  - [fail_if_selector_missing](/docs/options#fail_if_selector_missing): Fails the request if the elements specified by \`selector\` or \`wait_for\` options are not found on the page after waiting for \`wait_timeout\`.
+  - [fail_if_selector_present](/docs/options#fail_if_selector_present): Fails the request if the element specified by \`wait_to_leave\` option is found on the page after waiting for \`wait_timeout\`.
+  - [fail_on_4xx](/docs/options#fail_on_4xx): If \`fail_on_4xx=true\` and the requested URL returns a status code between 400 and 499, Urlbox will fail the request with error code 400 and the message: \`Failed to render. Requested URL returned a 4xx error code and fail_on_4xx was true\`
+  - [fail_on_5xx](/docs/options#fail_on_5xx): If \`fail_on_5xx=true\` and the requested URL returns a status code between 500 and 599, Urlbox will fail the request with error code 400 and message: \`Failed to render. Requested URL returned a 5xx error code and fail_on_5xx was true\`
+
+- [Page Options](/docs/options#page-options)
+  - [scroll_to](/docs/options#scroll_to): Scroll, to either an element or to a pixel offset from the top, before taking a screenshot
+  - [click](/docs/options#click): Specifies an element selector to click before generating a screenshot or PDF
+
+Example: \`#clickme\` would click an element with \`id="clickme"\`. 
+
+ Can be used multiple times to simulate multiple sequential click events.
+
+ If the selector matches multiple elements, only the first element will be clicked.
+  - [click_all](/docs/options#click_all): Specifies an element selector to click before generating a screenshot or PDF
+
+Example: \`.clickme\` would click all elements with \`class="clickme"\`. 
+
+ Can be used multiple times to simulate multiple sequential click events.
+
+ If the selector matches multiple elements, all elements will be clicked.
+  - [hover](/docs/options#hover): Specifies an element selector to hover over before generating a screenshot or PDF
+
+Example: \`#hoverme\` would hover over the element with \`id="hoverme"\`
+  - [bg_color](/docs/options#bg_color): Specify a hex code or CSS color string to use as the background color
+
+Some websites don't set a body background colour, and will show up as transparent backgrounds with PNG, or black when using JPG. Use this setting to set a background colour. If the website explicitly sets a transparent background on the html or body elements, this setting will be overridden.
+  - [disable_js](/docs/options#disable_js): Turns off javascript on the target URL. 
+
+~> Enabling this option will prevent \`full_page=true\` and many other options, because having javascript disabled prevents Urlbox from evaluating code inside the page's context.
+
+- [Full Page Options](/docs/options#full-page-options)
+  - [full_page_mode](/docs/options#full_page_mode): Whether to use scroll and stitch algorithm (the default) to render a full page screenshot, or to use the native full page screenshot algorithm, which is faster, but can be less accurate on some sites.
+  - [full_width](/docs/options#full_width): When full_page=true, specify whether to capture the full width of the website, for example if the site is horizontally scrolling.
+  - [allow_infinite](/docs/options#allow_infinite): By default, when Urlbox detects an infinite scrolling page, it does not attempt to continue scrolling to the bottom, as this could result in infinite scrolling! If you want to override this behaviour, pass \`true\` for this option.
+  - [skip_scroll](/docs/options#skip_scroll): Enabling \`skip_scroll\` will speed up renders by skipping an initial scroll through the page, which is used to trigger any lazy loading elements.
+  - [detect_full_height](/docs/options#detect_full_height): Some pages have full-height backgrounds whose heights are set to 100% of the viewport. This can cause the backgrounds to get stretched when making a full page screenshot. If you are seeing this behaviour in your full page screenshots, pass \`true\` for this option.
+  - [max_section_height](/docs/options#max_section_height): When Urlbox takes a \`full_page\` screenshot, the maximum height of each image section is set to 4096 pixels. If a sites height is greater than this value, Urlbox will start splitting the screenshot into sections. Sometimes it is worthwhile experimenting with this number.
+  - [scroll_increment](/docs/options#scroll_increment): Sets how many pixels to scroll when scrolling the page to trigger lazy loading elements. By default, the scroll increment is set to the browser viewport height. Some pages' lazy loading elements only trigger when the scroll increment is smaller than this, however, e.g. 400px.
+  - [scroll_delay](/docs/options#scroll_delay): When Urlbox decides to split a screenshot into multiple sections, the scroll delay is the time to wait between taking the screenshots of each individual section, in milliseconds. While Urlbox does detect animations, and attempts to wait for them before taking a screenshot, this option could be used to force Urlbox to wait for a certain amount of time after scrolling to the next section, to wait for things like animations to finish.
+
+- [Highlighting Options](/docs/options#highlighting-options)
+  - [highlight](/docs/options#highlight): Specify a string to highlight on the page before capturing a screenshot or PDF. To highlight multiple words, separate words with a pipe character e.g. Hello|World
+  - [highlightfg](/docs/options#highlightfg): Specify the text color of the highlighted word.
+  - [highlightbg](/docs/options#highlightbg): Specify the background color of the highlighted word.
+
+- [Geolocation Options](/docs/options#geolocation-options)
+  - [latitude](/docs/options#latitude): Sets the latitude used to emulate the Geolocation API.
+  - [longitude](/docs/options#longitude): Sets the longitude used to emulate the Geolocation API.
+  - [accuracy](/docs/options#accuracy): Sets the accurate of the Geolocation API in metres.
+
+- [Storage Options](/docs/options#storage-options)
+  - [use_s3](/docs/options#use_s3): Save the render directly to the S3 (or S3-Compatible) bucket configured on your account.
+  - [s3_path](/docs/options#s3_path): Sets the S3 path, including subdirectories and the filename, to use when saving the render in your S3-compatible bucket.
+
+~> The extension (e.g. .png, .jpg or .pdf) will be provided automatically, and should not be included in \`s3_path\`.
+  - [no_suffix](/docs/options#no_suffix): By default, urlbox adds the file extension (e.g. \`.png\`, \`.jpg\`, \`.pdf\` etc) to the \`s3_path\`.
+
+If \`no_suffix=true\`, the file extension will NOT be added to the \`s3_path\`.
+  - [s3_bucket](/docs/options#s3_bucket): Overrides the configured bucket to use when saving the render.
+  - [s3_endpoint](/docs/options#s3_endpoint): You can change the endpoint URL to use an S3 compatible storage provider e.g. DigitalOcean Spaces, Minio, Wasabi, Cloudflare R2 and more.
+  - [s3_region](/docs/options#s3_region): Override the configured S3 region when saving the render.
+  - [cdn_host](/docs/options#cdn_host): If your custom bucket is fronted by a CDN, you can set the host name here.
+  - [s3_storageclass](/docs/options#s3_storageclass): Sets the s3 storage class.
+
+- [LLM Options](/docs/options#llm-options)
+  - [use_llm](/docs/options#use_llm): Use the LLM configuration setup in your project settings, or those passed into the request.
+  - [llm_prompt](/docs/options#llm_prompt): The prompt to give the LLM EG "Analyse this image and its associated HTML, giving me back a summary of what the website contents are and a list of all of the links it has "
+  - [llm_system_prompt](/docs/options#llm_system_prompt): This can be used to provide more overall context for the AI's response.
+  - [llm_key](/docs/options#llm_key): The API access key for the given LLM provider.
+  - [llm_provider](/docs/options#llm_provider): The LLM provider to use.
+  - [llm_model](/docs/options#llm_model): The LLM model to use for the given provider. EG 'gpt-4o'
+  - [llm_temperature](/docs/options#llm_temperature): The temperature (creativity) for the LLM prompt. Defaults to 0 for less creative responses.
+  - [llm_max_tokens](/docs/options#llm_max_tokens): The max number of output tokens the LLM can generate a response with. Defaults to 1000.
+  - [llm_height](/docs/options#llm_height): The height of the thumbnail image that is sent to the LLM. Defaults to 512.
+  - [llm_width](/docs/options#llm_width): The width of the thumbnail image that is sent to the LLM. Defaults to 512.
+  - [llm_output](/docs/options#llm_output): You can provide a structured output type and schema to Urlbox, and we will prompt your LLM to give back that response structure. By passing an llm_schema without this option, it will default to responding with an object specified by your JSON Schema. If you choose Array, the response will be an array of your provided JSON Schema. If you choose enum, you can provide an array of strings as your schema, and your LLM will respond only with a value from that enum.
+  - [llm_schema](/docs/options#llm_schema): This is the JSON schema or string[] provided which we will pass over to your LLM. Your LLM provider will respond with a structured output (if supported by your provider) according to that schema. Please take a look at the various resources on the [JSON Schema](https://json-schema.org/tools?query=&sortBy=name&sortOrder=ascending&groupBy=toolingTypes&licenses=&languages=&drafts=&toolingTypes=&environments=&showObsolete=false&supportsBowtie=false) website for more information on designing and validating a JSON schema.
+
+## API Reference
+- [Base URL](/docs/api#base-url): Production endpoint at https://api.urlbox.com for all API requests
+- [Authentication](/docs/api#authentication): Bearer token authentication using project secret keys in Authorization header
+- [POST /v1/render/sync](/docs/api#create-a-render-synchronously): Immediate rendering that returns binary data or hosted URL with 200 status
+- [POST /v1/render/async](/docs/api#create-a-render-asynchronously): Queue-based rendering that returns render ID with 201 status for polling
+- [Render Links](/docs/render-links): GET requests via HMAC-signed URLs for direct HTML embedding without backend code
+
+## Example Code
+- [Node.js](/docs/examplecode/node): JavaScript/Node.js code samples
+- [Python](/docs/examplecode/python): Python code samples
+- [PHP](/docs/examplecode/php): PHP code samples
+- [Ruby](/docs/examplecode/ruby): Ruby code samples
+- [Java](/docs/examplecode/java): Java code samples
+- [C#](/docs/examplecode/csharp): C# code samples
+

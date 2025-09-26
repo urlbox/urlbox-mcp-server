@@ -7,7 +7,9 @@
   "scripts": {
     "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
     "dev": "npm run build && node build/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "biome lint src/",
+    "lint:fix": "biome lint --write src/",
+    "format": "biome format --write src/"
   },
   "keywords": ["mcp", "screenshot", "pdf", "urlbox", "web-automation"],
   "author": "Arnold Cubici-Jones <arnold@urlbox.com>",
@@ -17,6 +19,7 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
     "@types/node": "^22.13.4",
     "typescript": "^5.7.3"
   },
