@@ -169,6 +169,8 @@ export const UrlboxOptionsParams = {
     .optional()
     .describe("Sets the PDF page height, in pixels."),
   pdf_margin: z.string().optional().describe("Sets the margin of the PDF document."),
+  pdf_outline: z.boolean().optional().describe("Generates an outline for the PDF."),
+  pdf_tagged: z.boolean().optional().describe("Generates a tagged PDF."),
   pdf_margin_top: z.string().optional().describe("Sets a custom top margin on the PDF."),
   pdf_margin_right: z.string().optional().describe("Sets a custom right margin on the PDF."),
   pdf_margin_bottom: z.string().optional().describe("Sets a custom bottom margin on the PDF."),
@@ -511,7 +513,7 @@ export type ThumbnailResult = {
 
 export type UrlboxOkResponse = {
   renderUrl: string;
-  size: string;
+  size?: string;
   renderTime?: number;
   queueTime?: number;
   bandwidth?: number;
@@ -538,3 +540,18 @@ export type UrlboxErrorResponse = {
 };
 
 export type UrlboxResponse = UrlboxOkResponse | UrlboxErrorResponse;
+
+export const DownloadParams = {
+  renderUrl: z.string().optional().describe("Main render URL to download"),
+  htmlUrl: z.string().optional().describe("HTML URL to download"),
+  markdownUrl: z.string().optional().describe("Markdown URL to download"),
+  metadataUrl: z.string().optional().describe("Metadata JSON URL to download"),
+  mhtmlUrl: z.string().optional().describe("MHTML URL to download"),
+  originalOptions: UrlboxOptionsSchema.describe(
+    "Original options used for the render to help with filename generation"
+  ),
+};
+
+export const DownloadsSchema = z.object(DownloadParams);
+
+export type Downloads = z.infer<typeof DownloadsSchema>;

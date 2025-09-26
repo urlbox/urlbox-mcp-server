@@ -4,19 +4,13 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { TextFormats, UrlboxOptionsParams } from "./index.t.js";
-import type { UrlboxOkResponse, UrlboxOptions, UrlboxResponse } from "./index.t.js";
+import { DownloadParams, TextFormats, UrlboxOptionsParams } from "./index.t.js";
+import type { Downloads, UrlboxOkResponse, UrlboxOptions, UrlboxResponse } from "./index.t.js";
 
 const URLBOX_BASE_URL = "https://api.urlbox.com";
 const URLBOX_RENDER_SYNC = `${URLBOX_BASE_URL}/v1/render/sync`;
 // Found at https://urlbox.com/dashboard/projects
-const apiKey = process.env.API_KEY;
 const secret = process.env.SECRET_KEY;
-
-if (!apiKey) {
-  console.error("Error: API_KEY environment variable is required");
-  process.exit(1);
-}
 
 if (!secret) {
   console.error("Error: SECRET_KEY environment variable is required");
@@ -75,7 +69,7 @@ const generateFilename = (options: UrlboxOptions, extension?: string) => {
   return `${domain}_${timestamp}.${ext}`;
 };
 
-const storeRenderFiles = async (response: UrlboxOkResponse, options: UrlboxOptions) => {
+const storeRenderFiles = async (response: UrlboxOkResponse | Downloads, options: UrlboxOptions) => {
   const storedFiles: string[] = [];
 
   const urlsToStore = [
@@ -258,16 +252,35 @@ const renderSync = async <T>(options: UrlboxOptions): Promise<T | string> => {
 
 server.tool(
   "render",
-  "Uses Urlbox.com's POST API for advanced rendering with side renders. Ideal for: use of many options, converting websites to HTML/PDF/markdown, extracting metadata, saving cookies, rendering custom HTML/CSS/JS, and generating multiple output formats simultaneously (html, pdf, md, cookies etc.), while also capturing the main screenshot's format.",
+  "Uses Urlbox.com's POST API for advanced rendering with side renders. Download to computer using store_renders: true. Ideal for: use of many options, converting websites to HTML/PDF/markdown, extracting metadata, saving cookies, rendering custom HTML/CSS/JS, and generating multiple output formats simultaneously (html, pdf, md, cookies etc.), while also capturing the main screenshot's format.",
   UrlboxOptionsParams,
   async (options) => {
-    const response = await renderSync<UrlboxResponse>(options);
+    const response = await renderSync<UrlboxResponse>({ ...options, store_renders: undefined });
 
     let storedFiles: string[] | undefined;
     if (options.store_renders && typeof response !== "string" && !("error" in response)) {
       storedFiles = await storeRenderFiles(response, options);
     }
     return convertSyncResultToMcp(response, storedFiles);
+  }
+);
+
+// Useful if the user didn't download to fs and wants to after the fact
+server.tool(
+  "download",
+  "Takes all of the render URLs from any Urlbox response that hasn't already been downloaded, and saves it to the users file system.",
+  DownloadParams,
+  async (params) => {
+    const storedFiles = await storeRenderFiles(params, params.originalOptions);
+
+    return {
+      content: [
+        {
+          type: "text" as const,
+          text: storedFiles.join("\n"),
+        },
+      ],
+    };
   }
 );
 
