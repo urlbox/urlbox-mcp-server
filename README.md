@@ -1,5 +1,7 @@
 # Urlbox MCP Server
 
+[![image](urlbox-graphic.jpg)](https://www.urlbox.com)
+
 MCP server for the [Urlbox](https://urlbox.com) Screenshot API. Enables your client to take screenshots, generate PDFs, extract HTML/markdown, and more from websites.
 
 Visit [Urlbox](https://urlbox.com) for more information, and have a read of our [docs](https://urlbox.com) or chat with your LLM post install to get a good understanding of its options and capabilities.
