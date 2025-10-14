@@ -6,6 +6,8 @@ MCP server for the [Urlbox](https://urlbox.com) Screenshot API. Enables your cli
 
 Visit [Urlbox](https://urlbox.com) for more information, and have a read of our [docs](https://urlbox.com) or chat with your LLM post install to get a good understanding of its options and capabilities.
 
+[![MCP Badge](https://evanth.io/badge/mcp/urlbox-urlbox-mcp-server)](https://evanth.io/mcp/urlbox-urlbox-mcp-server)
+
 ## Setup
 
 1. **Install dependencies and build:**

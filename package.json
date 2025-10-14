@@ -1,8 +1,9 @@
 {
-  "name": "urlbox-mcp-server",
+  "name": "@urlbox/urlbox-mcp-server",
   "version": "1.0.0",
-  "description": "Render website screenshots and PDFs using Urlbox.com API with MCP integration.",
-  "main": "build/index.js",
+  "description": "An MCP integration for rendering full-page website screenshots and PDFs using the Urlbox API.",
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
   "type": "module",
   "scripts": {
     "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
@@ -11,9 +12,48 @@
     "lint:fix": "biome lint --write src/",
     "format": "biome format --write src/"
   },
-  "keywords": ["mcp", "screenshot", "pdf", "urlbox", "web-automation"],
-  "author": "Arnold Cubici-Jones <arnold@urlbox.com>",
+  "keywords": [
+    "mcp",
+    "urlbox",
+    "website",
+    "url screenshot",
+    "website capture",
+    "capture",
+    "puppeteer",
+    "playwright",
+    "url to image",
+    "url to pdf",
+    "full page",
+    "full height"
+  ],
+  "author": "Urlbox Ltd. <support@urlbox.com>",
+  "bugs": {
+    "url": "https://urlbox.com/support",
+    "email": "support@urlbox.com"
+  },
+  "contributors": [
+    {
+      "name": "Arnold Cubici-Jones",
+      "email": "arnold@urlbox.com"
+    }
+  ],
+  "exports": {
+    ".": {
+      "import": "./build/index.js",
+      "require": "./build/index.js",
+      "default": "./build/index.js"
+    }
+  },
+  "homepage": "https://urlbox.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/urlbox/urlbox-mcp-server.git"
+  },
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "readme": "https://github.com/urlbox/urlbox-mcp-server.git",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.5.0",
     "zod": "^3.24.2"
