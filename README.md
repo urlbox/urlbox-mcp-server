@@ -6,7 +6,7 @@ MCP server for the [Urlbox](https://urlbox.com) Screenshot API. Enables your cli
 
 Visit [Urlbox](https://urlbox.com) for more information, and have a read of our [docs](https://urlbox.com) or chat with your LLM post install to get a good understanding of its options and capabilities.
 
-[![MCP Badge](https://evanth.io/badge/mcp/urlbox-urlbox-mcp-server)](https://evanth.io/mcp/urlbox-urlbox-mcp-server)
+[![MCP Badge](https://evanth.io/badge/mcp/urlbox-screenshot-mcp)](https://evanth.io/mcp/urlbox-screenshot-mcp)
 
 ## Setup
 
@@ -27,17 +27,15 @@ Visit [Urlbox](https://urlbox.com) for more information, and have a read of our 
 
 ```JSON 
 {
-    "mcpServers": {
-        "urlbox": {
-            "command": "node",
-            "args": [
-                "<REPLACE_THIS_WITH_THE_PATH_TO_THIS_REPO>/build/index.js"
-            ],
-            "env": {
-                "SECRET_KEY": "<REPLACE_WITH_YOUR_SECRET_KEY>"
-            }
-        }
+  "mcpServers": {
+    "screenshot": {
+      "command": "npx",
+      "args": ["-y", "@urlbox/screenshot-mcp"],
+      "env": {
+        "SECRET_KEY": "your_api_key_here"
+      }
     }
+  }
 }
 ```
 

@@ -1,6 +1,6 @@
 {
-  "name": "@urlbox/urlbox-mcp-server",
-  "version": "1.0.0",
+  "name": "@urlbox/screenshot-mcp",
+  "version": "1.0.3",
   "description": "An MCP integration for rendering full-page website screenshots and PDFs using the Urlbox API.",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
@@ -64,7 +64,7 @@
     "typescript": "^5.7.3"
   },
   "bin": {
-    "urlbox-mcp": "./build/index.js"
+    "screenshot-mcp": "./build/index.js"
   },
   "files": [
     "build"
